@@ -26,10 +26,10 @@ The app relies on a secret set as the environment variable `JWT_SECRET` to produ
 
 ## Steps to run the API locally (to test endpoints)
 1. Install python dependencies with `pip install -r requirements.txt`.
-2. Set up the environment:
+2. Set up the environment with `touch .env`, open the file and add these variables:
     ```bash
-    export JWT_SECRET='myjwtsecret'
-    export LOG_LEVEL=DEBUG
+    JWT_SECRET='myjwtsecret'
+    LOG_LEVEL=DEBUG
     ```
 3. Run the app with the flask development server with `python main.py`
 
@@ -48,6 +48,24 @@ Use `sudo apt-get install jq` on Linux or `chocolatey install jq` on Windows.
     ```bash
     curl --request GET 'http://127.0.0.1:8080/contents' -H "Authorization: Bearer ${TOKEN}" | jq .
     ```
+
+## Build and run a Docker Image
+Build the Image:
+```bash
+docker build -t "jwt-api-test" .
+docker image ls
+```
+
+If required, you can delete an image using `docker image rm -f <image_name>`
+
+Run the Image locally:
+```bash
+docker run --env-file=.env -p 80:8080 jwt-api-test
+docker container ls
+```
+
+If required, you can stop a container using `docker stop [OPTIONS] CONTAINER [CONTAINER...]`
+or delete a container using `docker rm [OPTIONS] CONTAINER [CONTAINER...]`
 
 ## Project Steps
 
