@@ -18,6 +18,10 @@ docs/_build/
 __pycache__
 .env_file
 
+# config files
+trust.json
+iam-role-policy.json
+
 # Coverage reports
 htmlcov/
 .coverage

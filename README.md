@@ -182,7 +182,7 @@ The next steps are provided to quickly set up an IAM role for your cluster. This
     kubectl get -n kube-system configmap/aws-auth -o yaml > /tmp/aws-auth-patch.yml
     ```
 
-    The file will be created at /System/Volumes/Data/private/tmp/aws-auth-patch.yml path.
+    The file will be created at `/System/Volumes/Data/private/tmp/aws-auth-patch.yml` path on Linux or at `~\AppData\Local\Temp` on Windows.
 
 2. Open the `aws-auth-patch.yml` file. In the “data/mapRoles” section of this document add the following, replacing `<ACCOUNT_ID>` with your AWS account id:
 
