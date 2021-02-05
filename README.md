@@ -67,6 +67,16 @@ docker container ls
 If required, you can stop a container using `docker stop [OPTIONS] CONTAINER [CONTAINER...]`
 or delete a container using `docker rm [OPTIONS] CONTAINER [CONTAINER...]`
 
+Use the endpoints like before to test whether the container is running correctly.
+This time make sure to use the port specified for the docker container (80) and
+also adjust the IP address depending on your system. On Windows the default
+machine IP should be `192.168.99.100`. It can be obtained by running `docker-machine ip default`.
+
+```bash
+export TOKEN=`curl -d '{"email":"<EMAIL>","password":"<PASSWORD>"}' -H "Content-Type: application/json" -X POST 192.168.99.100:80/auth  | jq -r
+curl --request GET '192.168.99.100:80/contents' -H "Authorization: Bearer ${TOKEN}" | jq .
+```
+
 ## Project Steps
 
 Completing the project involves several steps:
