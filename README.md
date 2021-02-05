@@ -173,6 +173,31 @@ The next steps are provided to quickly set up an IAM role for your cluster. This
 
 You have now created a role named 'UdacityFlaskDeployCBKubectlRole'.
 
+## Grant the Role Access to the Cluster
+The next steps are provided to quickly set up an IAM role for your cluster. This is the role that CodeBuild will assume to administer the EKS cluster.
+
+1. The 'aws-auth ConfigMap' is used to grant role-based access control to your cluster. When your cluster is first created, the user who created it is given sole permission to administer it. You need to add the role you just created so that CodeBuild can administer it as well. Get the current configmap and save it to a file:
+
+    ```bash
+    kubectl get -n kube-system configmap/aws-auth -o yaml > /tmp/aws-auth-patch.yml
+    ```
+
+    The file will be created at /System/Volumes/Data/private/tmp/aws-auth-patch.yml path.
+
+2. Open the `aws-auth-patch.yml` file. In the “data/mapRoles” section of this document add the following, replacing `<ACCOUNT_ID>` with your AWS account id:
+
+    ```bash
+        - rolearn: arn:aws:iam::<ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
+        username: build
+        groups:
+            - system:masters
+    ```
+
+3. Update your cluster's configmap:
+
+    ```bash
+    kubectl patch configmap/aws-auth -n kube-system --patch "$(cat /tmp/aws-auth-patch.yml)"
+    ```
 
 ## Project Steps
 
