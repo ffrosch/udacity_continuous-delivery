@@ -111,8 +111,68 @@ AWS website.
 
 Remember to delete the cluster as soon as it is not needed anymore:
 ```bash
-`eksctl delete cluster simple-jwt-api`
+eksctl delete cluster simple-jwt-api
 ```
+
+## Set Up an IAM Role for the Cluster
+The next steps are provided to quickly set up an IAM role for your cluster. This is the role that CodeBuild will assume to administer the EKS cluster.
+
+1. Get your AWS account id:
+    ```bash
+    aws sts get-caller-identity --query Account --output text
+    ```
+2. Create a role trust policy. You can do this in either of the following two ways:
+    * Set an environment variable `TRUST` with the role trust policy. In the command below, replace `<ACCOUNT_ID>` with your account id:
+    ```bash
+    TRUST="{ \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"arn:aws:iam::<ACCOUNT_ID>:root\" }, \"Action\": \"sts:AssumeRole\" } ] }"
+    ```
+    * Create a `trust.json` file, as shown in the Deployment lesson, under AWSCLI concept. The `trust.json` file would contain the policy details as:
+    ```bash
+    { "Version": "2012-10-17",
+    "Statement":[{
+    "Effect": "Allow",
+    "Principal": {"AWS":"arn:aws:iam::<ACCOUNT_ID>:root"},
+    "Action": "sts:AssumeRole"
+    }]
+    }
+    ```
+3. Create a role named 'UdacityFlaskDeployCBKubectlRole' using the role trust policy from the TRUST variable:
+    ```bash
+    aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document "$TRUST" --output text --query 'Role.Arn'
+    ```
+
+    If you have used a `trust.json` file, the command will be:
+    ```bash
+    aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document file://trust.json --output text --query 'Role.Arn'
+    ```
+4. Create a role policy document that allows the actions "eks:Describe*" and "ssm:GetParameters". You can create the document in your tmp directory:
+    ```bash
+    echo '{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Action": [ "eks:Describe*", "ssm:GetParameters" ], "Resource": "*" } ] }' > /tmp/iam-role-policy
+    ```
+
+    Alternatively, you can create `iam-role-policy.json` as:
+    ```bash
+    {
+    "Version": "2012-10-17",
+    "Statement":[{
+        "Effect": "Allow",
+        "Action": ["eks:Describe*", "ssm:GetParameters"],
+        "Resource":"*"
+    }]
+    }
+    ```
+5. Attach the policy to the 'UdacityFlaskDeployCBKubectlRole'. You can read the policy file from tmp directory created in step above, and attach the policy as:
+    ```bash
+    aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file:///tmp/iam-role-policy
+    ```
+
+    For `iam-role-policy.json`, the command will be:
+    ```bash
+    aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file://iam-role-policy.json
+    ```
+
+You have now created a role named 'UdacityFlaskDeployCBKubectlRole'.
+
 
 ## Project Steps
 
