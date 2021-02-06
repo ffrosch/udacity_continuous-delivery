@@ -91,18 +91,23 @@ curl --request GET '192.168.99.100:80/contents' -H "Authorization: Bearer ${TOKE
 ```
 
 ## Create an EKS Cluster and IAM Role
-1. Install the AWSCLI:
+2. Install the AWSCLI:
     ```bash
     pip install awscli --upgrade
     which aws
     aws --version
     ```
-2. Generate AWS Access key ID and Secret access key for an existing IAM User on the
-AWS website.
-3. Setup your environment to use Access key ID and Secret access key.
+
+3. Generate AWS Access key ID and Secret access key for an existing IAM User on the
+AWS website. Choose Identity and Access Management (IAM) service console. Go to [Users](https://console.aws.amazon.com/iam/home#/users) section.
+     - If you haven’t already, add a new user. To keep it simple, note that the newly created user would need an “AdministratorAccess” permission in order to create a cluster.
+     - Go to AWS console, generate Access key ID and Secret access key for an existing IAM User. You must **save the keys locally**.
+
+4. Setup your environment to use Access key ID and Secret access key.
     * On your terminal, run `aws configure list`. It will show you the values as not set.
     * Run `aws configure --profile default`. It will prompt you for Access key ID, Secret access key, and Default region name.
-4. Install the 'eksctl' tool. The 'eksctl' tool allows interaction with an EKS cluster from the command line.
+
+5. Install the 'eksctl' tool. The 'eksctl' tool allows interaction with an EKS cluster from the command line.
 
     Linux:
     ```bash
@@ -115,7 +120,7 @@ AWS website.
     choco install -y eksctl # or if already installed: choco upgrade -y eksctl
     eksctl version
     ```
-5. Create an EKS cluster named “simple-jwt-api” and set up all the associated services:
+6. Create an EKS cluster named “simple-jwt-api” and set up all the associated services:
     ```bash
     eksctl create cluster --name simple-jwt-api
     ```
