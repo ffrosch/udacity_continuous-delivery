@@ -203,10 +203,10 @@ The next steps are provided to quickly set up an IAM role for your cluster. This
 2. Open the `aws-auth-patch.yml` file. In the “data/mapRoles” section of this document add the following, replacing `<ACCOUNT_ID>` with your AWS account id:
 
     ```yml
-        - rolearn: arn:aws:iam::<ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
-        username: build
-        groups:
-            - system:masters
+        - groups:
+          - system:masters
+          rolearn: arn:aws:iam::<ACCOUNT_ID>:role/UdacityFlaskDeployCBKubectlRole
+          username: build
     ```
 
 3. Update your cluster's configmap:
@@ -300,14 +300,15 @@ You will now create a pipeline that watches your Github. When changes are checke
 2. To test your api endpoints, get the external IP for your service:
 
     ```bash
-    kubectl get services simple-jwt-api -o wide
+    export URL="$(kubectl get services simple-jwt-api -o wide | grep -o "[0-9\.a-z-]*amazonaws.com")"
     ```
 
     Now use the external IP url to test the app:
 
     ```bash
-    export TOKEN=`curl -d '{"email":"<EMAIL>","password":"<PASSWORD>"}' -H "Content-Type: application/json" -X POST <EXTERNAL-IP URL>/auth  | jq -r '.token'`
-    curl --request GET '<EXTERNAL-IP URL>/contents' -H "Authorization: Bearer ${TOKEN}" | jq
+    export TOKEN=`curl -d '{"email":"<EMAIL>","password":"<PASSWORD>"}' -H "Content-Type: application/json" -X POST ${URL}/auth  | jq -r '.token'`
+    curl --request GET "${URL}/contents" -H "Authorization: Bearer ${TOKEN}" | jq
+    curl -s GET "${URL}" # returns "Healthy"
     ```
 
 3. **Save the external IP from above to provide to the reviewer when you will submit your project**. Go to the next page for details about the project submission process.
