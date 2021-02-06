@@ -315,6 +315,8 @@ You will now create a pipeline that watches your Github. When changes are checke
 
 ## Add Tests to the Build
 
+Tests can be run locally using `pytest test_main.py`.
+
 1. Add running tests as part of the build.
 
     To require the unit tests to pass before our build will deploy new code to your cluster, you will add the tests to the build stage. You will add the same commands to the buildspec.yml:
